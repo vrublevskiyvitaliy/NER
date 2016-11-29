@@ -4,11 +4,14 @@ import nltk
 import pycrfsuite
 from subprocess import call
 import featureTagger
+from en_data_provider import get_eng_train_data
 
 ##print test data files
 # print(nltk.corpus.conll2002.fileids())
-train_sents = list(nltk.corpus.conll2002.iob_sents('esp.train'))
+#train_sents_1 = list(nltk.corpus.conll2002.iob_sents('esp.train'))
+train_sents = get_eng_train_data()
 
+y = 0
 
 def sent2features(sent):
     return [featureTagger.word2features(sent, i) for i in range(len(sent))]
@@ -45,8 +48,8 @@ trainer.set_params({
 
 trainer.params()
 
-trainer.train('conll2002-esp.crfsuite')
+trainer.train('english.crfsuite')
 
-call('ls -lh ./conll2002-esp.crfsuite', shell=True)
+#call('ls -lh ./conll2002-esp.crfsuite', shell=True)
 
-print("File conll2002-esp.crfsuite created")
+#print("File conll2002-esp.crfsuite created")

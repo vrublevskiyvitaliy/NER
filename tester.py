@@ -8,8 +8,10 @@ import sklearn
 import pycrfsuite
 from subprocess import call
 import featureTagger
+from en_data_provider import get_eng_test_data
 
-test_sents = list(nltk.corpus.conll2002.iob_sents('esp.testb'))
+#test_sents = list(nltk.corpus.conll2002.iob_sents('esp.testb'))
+test_sents = get_eng_test_data()
 
 
 def sent2features(sent):
@@ -27,7 +29,7 @@ y_test = [sent2labels(s) for s in test_sents]
 
 
 tagger = pycrfsuite.Tagger()
-tagger.open('conll2002-esp.crfsuite')
+tagger.open('english.crfsuite')
 
 example_sent = test_sents[0]
 #print(' '.join(sent2tokens(example_sent)), end='\n\n')
@@ -71,18 +73,18 @@ def print_transitions(trans_features):
     for (label_from, label_to), weight in trans_features:
         print("%-6s -> %-7s %0.6f" % (label_from, label_to, weight))
 
-# print("Top likely transitions:")
-# print_transitions(Counter(info.transitions).most_common(15))
-#
-# print("\nTop unlikely transitions:")
-# print_transitions(Counter(info.transitions).most_common()[-15:])
+print("Top likely transitions:")
+print_transitions(Counter(info.transitions).most_common(5))
+
+print("\nTop unlikely transitions:")
+print_transitions(Counter(info.transitions).most_common()[-5:])
 
 def print_state_features(state_features):
     for (attr, label), weight in state_features:
         print("%0.6f %-6s %s" % (weight, label, attr))
 
-# print("Top positive:")
-# print_state_features(Counter(info.state_features).most_common(20))
-#
-# print("\nTop negative:")
-# print_state_features(Counter(info.state_features).most_common()[-20:])
+print("Top positive:")
+print_state_features(Counter(info.state_features).most_common(20))
+
+print("\nTop negative:")
+print_state_features(Counter(info.state_features).most_common()[-20:])
