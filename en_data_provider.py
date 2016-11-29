@@ -31,7 +31,6 @@ def get_all_text():
                 if i == 50000:
                     break
         file.close()
-        #eng_text = eng_text[:1000]
     return eng_text
 
 

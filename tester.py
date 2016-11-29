@@ -1,24 +1,22 @@
 # coding=utf-8
 from __future__ import print_function
 from itertools import chain
-import nltk
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report
 from sklearn.preprocessing import LabelBinarizer
-import sklearn
 import pycrfsuite
-from subprocess import call
 import featureTagger
 from en_data_provider import get_eng_test_data
 
-#test_sents = list(nltk.corpus.conll2002.iob_sents('esp.testb'))
 test_sents = get_eng_test_data()
 
 
 def sent2features(sent):
     return [featureTagger.word2features(sent, i) for i in range(len(sent))]
 
+
 def sent2labels(sent):
     return [label for token, postag, label in sent]
+
 
 def sent2tokens(sent):
     return [token for token, postag, label in sent]
@@ -31,11 +29,6 @@ y_test = [sent2labels(s) for s in test_sents]
 tagger = pycrfsuite.Tagger()
 tagger.open('english.crfsuite')
 
-example_sent = test_sents[0]
-#print(' '.join(sent2tokens(example_sent)), end='\n\n')
-
-print("Predicted:", ' '.join(tagger.tag(sent2features(example_sent))))
-print("Correct:  ", ' '.join(sent2labels(example_sent)))
 
 def bio_classification_report(y_true, y_pred):
     """
@@ -61,13 +54,13 @@ def bio_classification_report(y_true, y_pred):
     )
 
 
-##time
 y_pred = [tagger.tag(xseq) for xseq in X_test]
 
 print(bio_classification_report(y_test, y_pred))
 
 from collections import Counter
 info = tagger.info()
+
 
 def print_transitions(trans_features):
     for (label_from, label_to), weight in trans_features:
@@ -78,6 +71,7 @@ print_transitions(Counter(info.transitions).most_common(5))
 
 print("\nTop unlikely transitions:")
 print_transitions(Counter(info.transitions).most_common()[-5:])
+
 
 def print_state_features(state_features):
     for (attr, label), weight in state_features:
