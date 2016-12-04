@@ -138,4 +138,5 @@ def word2features(sent, i, feature_config):
     else:
         features.append('EOS')
 
+    features = sorted(features)
     return features
