@@ -25,7 +25,7 @@ def word2features(sent, i, feature_config):
         ##'word.islower=%s' % word.islower(),##
         ##'word.isspace=%s' % word.isspace(),##
         ##'word.len=%s' % len(word), ##,
-        'word.lower=' + word.lower(),
+        ##'word.lower=' + word.lower(),
         'word[-3:]=' + word[-3:],
         'word[-2:]=' + word[-2:],
         'word.isupper=%s' % word.isupper(),
@@ -37,6 +37,8 @@ def word2features(sent, i, feature_config):
     ]
     if feature_config[0]:
         features.append('word.len=%s' % len(word))
+    if feature_config[1]:
+        features.append('word.lower=' + word.lower())
 
     if i > 0:
         word1 = sent[i-1][0]

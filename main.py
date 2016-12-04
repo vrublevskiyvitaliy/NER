@@ -18,8 +18,8 @@ def run():
     train_file = 'trained_models/english.crfsuite'
     train_data_percent = 0.25
     blocks = int(1 / train_data_percent)
-    all_config = 2
-    max_c = 1
+    all_config = 4
+    max_c = 2
     for c in range(all_config):
         config = get_feature_configuration(c, max_c)
         total_f1 = 0
