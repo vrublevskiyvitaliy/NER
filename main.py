@@ -5,12 +5,11 @@ from tester import test
 
 def run():
     train_file = 'trained_models/english.crfsuite'
-    train_d = get_eng_train_data()
-    test_d = get_eng_test_data()
-    train(train_d, train_file)
-    print(test(test_d, train_file))
-
-
+    for i in range(4):
+        train_d = get_eng_train_data(i)
+        test_d = get_eng_test_data(i)
+        train(train_d, train_file)
+        print(test(test_d, train_file))
 
 run()
 
