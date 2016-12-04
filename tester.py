@@ -4,21 +4,8 @@ from itertools import chain
 from sklearn.metrics import classification_report, precision_recall_fscore_support
 from sklearn.preprocessing import LabelBinarizer
 import pycrfsuite
-import featureTagger
+from featureTagger import *
 import numpy as np
-from en_data_provider import get_eng_test_data
-
-
-def sent2features(sent):
-    return [featureTagger.word2features(sent, i) for i in range(len(sent))]
-
-
-def sent2labels(sent):
-    return [label for token, pos_tag, label in sent]
-
-
-def sent2tokens(sent):
-    return [token for token, pos_tag, label in sent]
 
 
 def get_correct_f1(y_true, y_predicted, labels):
@@ -50,13 +37,13 @@ def bio_classification_report(y_true, y_predicted):
         labels=labels,
         target_names=tag_set,
     )
-    print(report)
+    #print(report)
 
     return f1
 
 
-def test(test_data, train_file):
-    x_test = [sent2features(s) for s in test_data]
+def test(test_data, train_file, feature_config):
+    x_test = [sent2features(s, feature_config) for s in test_data]
     y_test = [sent2labels(s) for s in test_data]
 
     tagger = pycrfsuite.Tagger()

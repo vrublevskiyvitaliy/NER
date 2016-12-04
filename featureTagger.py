@@ -3,7 +3,18 @@ from features import is_month
 from features import is_sr_sra
 
 
-def word2features(sent, i):
+def sent2features(sent, feature_config):
+    return [word2features(sent, i, feature_config) for i in range(len(sent))]
+
+
+def sent2labels(sent):
+    return [label for token, pos_tag, label in sent]
+
+
+def sent2tokens(sent):
+    return [token for token, pos_tag, label in sent]
+
+def word2features(sent, i, feature_config):
     word = sent[i][0]
     pos_tag = sent[i][1]
     features = [
@@ -13,7 +24,7 @@ def word2features(sent, i):
         ##'word.isalpha=%s' % word.isalpha(),##
         ##'word.islower=%s' % word.islower(),##
         ##'word.isspace=%s' % word.isspace(),##
-        'word.len=%s' % len(word), ##,
+        ##'word.len=%s' % len(word), ##,
         'word.lower=' + word.lower(),
         'word[-3:]=' + word[-3:],
         'word[-2:]=' + word[-2:],
@@ -24,6 +35,9 @@ def word2features(sent, i):
         'pos_tag=' + pos_tag,
         'pos_tag[:2]=' + pos_tag[:2],
     ]
+    if feature_config[0]:
+        features.append('word.len=%s' % len(word))
+
     if i > 0:
         word1 = sent[i-1][0]
         pos_tag1 = sent[i-1][1]

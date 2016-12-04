@@ -1,26 +1,11 @@
 # coding=utf-8
 from __future__ import print_function
 import pycrfsuite
-import featureTagger
-
-from en_data_provider import get_eng_train_data
-
-#train_sents = get_eng_train_data()
-
-def sent2features(sent):
-    return [featureTagger.word2features(sent, i) for i in range(len(sent))]
+from featureTagger import *
 
 
-def sent2labels(sent):
-    return [label for token, pos_tag, label in sent]
-
-
-def sent2tokens(sent):
-    return [token for token, pos_tag, label in sent]
-
-
-def train(train_sent, name_of_file):
-    x_train = [sent2features(s) for s in train_sent]
+def train(train_sent, name_of_file, feature_config):
+    x_train = [sent2features(s, feature_config) for s in train_sent]
     y_train = [sent2labels(s) for s in train_sent]
 
     trainer = pycrfsuite.Trainer(verbose=False)
@@ -38,6 +23,4 @@ def train(train_sent, name_of_file):
     })
 
     trainer.params()
-
-    #trainer.train('english.crfsuite')
     trainer.train(name_of_file)
