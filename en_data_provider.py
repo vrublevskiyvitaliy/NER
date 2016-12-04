@@ -1,7 +1,7 @@
 # coding=utf-8
 import codecs
 
-MAX_USED_DATA = 50000
+MAX_USED_DATA = 1000
 TRAIN_DATA_PERCENT = 0.1
 eng_text = []
 

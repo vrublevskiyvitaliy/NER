@@ -1,13 +1,12 @@
 # coding=utf-8
 from __future__ import print_function
 from itertools import chain
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, precision_recall_fscore_support
 from sklearn.preprocessing import LabelBinarizer
 import pycrfsuite
 import featureTagger
+import numpy as np
 from en_data_provider import get_eng_test_data
-
-test_sents = get_eng_test_data()
 
 
 def sent2features(sent):
@@ -15,49 +14,61 @@ def sent2features(sent):
 
 
 def sent2labels(sent):
-    return [label for token, postag, label in sent]
+    return [label for token, pos_tag, label in sent]
 
 
 def sent2tokens(sent):
-    return [token for token, postag, label in sent]
+    return [token for token, pos_tag, label in sent]
 
 
-X_test = [sent2features(s) for s in test_sents]
-y_test = [sent2labels(s) for s in test_sents]
+def get_correct_f1(y_true, y_predicted, labels):
+    p, r, f1, s = precision_recall_fscore_support(
+        y_true,
+        y_predicted,
+        labels=labels,
+        average=None,
+        sample_weight=None
+    )
+    f1 = np.average(f1, weights=s)
+    return f1
 
 
-tagger = pycrfsuite.Tagger()
-tagger.open('english.crfsuite')
-
-
-def bio_classification_report(y_true, y_pred):
-    """
-    Classification report for a list of BIO-encoded sequences.
-    It computes token-level metrics and discards "O" labels.
-
-    Note that it requires scikit-learn 0.15+ (or a version from github master)
-    to calculate averages properly!
-    """
+def bio_classification_report(y_true, y_predicted):
     lb = LabelBinarizer()
     y_true_combined = lb.fit_transform(list(chain.from_iterable(y_true)))
-    y_pred_combined = lb.transform(list(chain.from_iterable(y_pred)))
+    y_predicted_combined = lb.transform(list(chain.from_iterable(y_predicted)))
 
-    tagset = set(lb.classes_) - {'O'}
-    tagset = sorted(tagset, key=lambda tag: tag.split('-', 1)[::-1])
+    tag_set = set(lb.classes_) - {'O'}
+    tag_set = sorted(tag_set, key=lambda tag: tag.split('-', 1)[::-1])
     class_indices = {cls: idx for idx, cls in enumerate(lb.classes_)}
+    labels = [class_indices[cls] for cls in tag_set]
 
-    return classification_report(
+    f1 = get_correct_f1(y_true_combined, y_predicted_combined, labels)
+    report = classification_report(
         y_true_combined,
-        y_pred_combined,
-        labels = [class_indices[cls] for cls in tagset],
-        target_names = tagset,
+        y_predicted_combined,
+        labels=labels,
+        target_names=tag_set,
     )
+    print(report)
+
+    return f1
 
 
-y_pred = [tagger.tag(xseq) for xseq in X_test]
+def test(test_data, train_file):
+    x_test = [sent2features(s) for s in test_data]
+    y_test = [sent2labels(s) for s in test_data]
 
-print(bio_classification_report(y_test, y_pred))
+    tagger = pycrfsuite.Tagger()
+    tagger.open(train_file)
 
+    y_predicted = [tagger.tag(x_seq) for x_seq in x_test]
+
+    f1 = bio_classification_report(y_test, y_predicted)
+
+    return f1
+
+'''
 from collections import Counter
 info = tagger.info()
 
@@ -82,3 +93,4 @@ print_state_features(Counter(info.state_features).most_common(20))
 
 print("\nTop negative:")
 print_state_features(Counter(info.state_features).most_common()[-20:])
+'''

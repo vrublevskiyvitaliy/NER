@@ -3,31 +3,20 @@
 months = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","setiembre","octubre","noviembre","diciembre"]
 srs = ["señora", "señor", "sr", "sra","sr.","sra."]
 
-def isMonth(text):
-    lowerCaseText = text.lower()
-    return isInArray(lowerCaseText,months)
+
+def is_month(text):
+    lower_case_text = text.lower()
+    return is_in_array(lower_case_text, months)
 
 
-def isSrSra(text):
-    lowerCaseText = text.lower()
-    return isInArray(lowerCaseText,srs)
+def is_sr_sra(text):
+    lower_case_text = text.lower()
+    return is_in_array(lower_case_text, srs)
 
 
-
-def isInArray(text, array):
+def is_in_array(text, array):
     try:
-        wordIndex = array.index(text)
+        array.index(text)
     except ValueError:
         return False
     return True
-
-
-# print(isMonth("Enero"))
-# print(isMonth("yolo"))
-# print(isMonth("8"))
-# print(isMonth("2"))
-# print(isMonth("DICIEMBRE"))
-
-# print(isSrSra("sra"))
-# print(isSrSra("SRA."))
-# print(isSrSra("SRA.asd"))
