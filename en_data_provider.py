@@ -2,7 +2,6 @@
 import codecs
 
 MAX_USED_DATA = 1000
-TRAIN_DATA_PERCENT = 0.25
 eng_text = []
 
 
@@ -34,20 +33,18 @@ def get_all_text():
     return eng_text
 
 
-def get_eng_train_data(block=0):
+def get_eng_train_data(train_data_percent, block=0):
     text = get_all_text()
-    global TRAIN_DATA_PERCENT
     size = len(text)
-    size = int(TRAIN_DATA_PERCENT * size)
+    size = int(train_data_percent * size)
     f = block * size
     return text[f:f+size]
 
 
-def get_eng_test_data(exclude=0):
+def get_eng_test_data(train_data_percent, exclude):
     text = get_all_text()
-    global TRAIN_DATA_PERCENT
     size = len(text)
-    size = int(TRAIN_DATA_PERCENT * size)
+    size = int(train_data_percent * size)
     begin = text[:exclude * size]
     end = text[(exclude + 1) * size + 1:]
     return begin + end
