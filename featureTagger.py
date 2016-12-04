@@ -84,9 +84,30 @@ def add_isupper_feature(words):
     return res
 
 
+def add_pos_tag_feature(pos_tags):
+    res = []
+    if pos_tags['pre']:
+        res.append('pos_tag=' + pos_tags['pre'])
+    res.append('-1:pos_tag=' + pos_tags['current'])
+    if pos_tags['next']:
+        res.append('+1:pos_tag=' + pos_tags['next'])
+
+    return res
+
+
+def add_pos_tag_2_feature(pos_tags):
+    res = []
+    if pos_tags['pre']:
+        res.append('pos_tag[:2]=' + pos_tags['pre'][:2])
+    res.append('-1:pos_tag[:2]=' + pos_tags['current'][:2])
+    if pos_tags['next']:
+        res.append('+1:pos_tag[:2]=' + pos_tags['next'][:2])
+
+    return res
+
+
 def word2features(sent, i, feature_config):
     word = sent[i][0]
-    pos_tag = sent[i][1]
     features = [
         'bias',
         'word=%s' % word,
@@ -99,20 +120,23 @@ def word2features(sent, i, feature_config):
         'word.istitle=%s' % word.istitle(),
         'word.isdigit=%s' % word.isdigit(),
         #'word.issrsra=%s' % isSrSra(word),
-        'pos_tag=' + pos_tag,
-        'pos_tag[:2]=' + pos_tag[:2],
     ]
     words = get_three_words(sent, i)
+    pos_tags = get_three_pos_tags(sent, i)
+
     if feature_config[0]:
         features.extend(add_len_feature(words))
     if feature_config[1]:
         features.extend(add_lower_feature(words))
     if feature_config[2]:
         features.extend(add_isupper_feature(words))
+    if feature_config[3]:
+        features.extend(add_pos_tag_feature(pos_tags))
+    if feature_config[4]:
+        features.extend(add_pos_tag_2_feature(pos_tags))
 
     if i > 0:
         word1 = sent[i-1][0]
-        pos_tag1 = sent[i-1][1]
         features.extend([
             '-1:word=%s' % word1,
             ##'-1:word.isalnum=%s' % word.isalnum(),
@@ -121,19 +145,14 @@ def word2features(sent, i, feature_config):
             ##'-1:word.isspace=%s' % word.isspace(),
             '-1:word.istitle=%s' % word1.istitle(),
             #'-1:word.issrsra=%s' % isSrSra(word1),
-            '-1:pos_tag=' + pos_tag1,
-            '-1:pos_tag[:2]=' + pos_tag1[:2],
         ])
     else:
         features.append('BOS')
 
     if i < len(sent)-1:
         word1 = sent[i+1][0]
-        pos_tag1 = sent[i+1][1]
         features.extend([
             '+1:word.istitle=%s' % word1.istitle(),
-            '+1:pos_tag=' + pos_tag1,
-            '+1:pos_tag[:2]=' + pos_tag1[:2],
         ])
     else:
         features.append('EOS')
