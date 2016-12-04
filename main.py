@@ -18,8 +18,10 @@ def run():
     train_file = 'trained_models/english.crfsuite'
     train_data_percent = 0.25
     blocks = int(1 / train_data_percent)
-    all_config = 4
-    max_c = 2
+    all_config = 8
+    max_c = 3
+    best_f1 = 0
+    best_config = 0
     for c in range(all_config):
         config = get_feature_configuration(c, max_c)
         total_f1 = 0
@@ -33,6 +35,11 @@ def run():
         total_f1 /= blocks
         print("Config = " + str(config))
         print("Final F1 = " + str(total_f1))
+        if total_f1 > best_f1:
+            best_f1 = total_f1
+            best_config = config
+    print("Best config = " + str(best_config))
+    print("Best F1 = " + str(best_f1))
 
 
 run()
