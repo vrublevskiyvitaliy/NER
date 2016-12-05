@@ -1,6 +1,5 @@
 # coding=utf-8
-from features import is_month
-from features import is_sr_sra
+from features import *
 
 
 def sent2features(sent, feature_config):
@@ -106,6 +105,20 @@ def add_pos_tag_2_feature(pos_tags):
     return res
 
 
+def add_before_location_feature(words):
+    res = []
+    if words['pre']:
+        res.append('word[:2]=' + str(is_before_locations(words['pre'])))
+    res.append('-1:word[:2]=' + str(is_before_locations(words['current'])))
+    if words['next']:
+        res.append('+1:word[:2]=' + str(is_before_locations(words['next'])))
+
+    return res
+
+
+
+
+
 def word2features(sent, i, feature_config):
     word = sent[i][0]
     features = [
@@ -134,6 +147,8 @@ def word2features(sent, i, feature_config):
         features.extend(add_pos_tag_feature(pos_tags))
     if feature_config[4]:
         features.extend(add_pos_tag_2_feature(pos_tags))
+    if feature_config[5]:
+        features.extend(add_before_location_feature(words))
 
     if i > 0:
         word1 = sent[i-1][0]

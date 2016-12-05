@@ -18,7 +18,7 @@ def run():
     train_file = 'trained_models/english.crfsuite'
     train_data_percent = 0.25
     blocks = int(1 / train_data_percent)
-    max_c = 5
+    max_c = 1
     all_config = 2**max_c
     best_f1 = 0
     best_config = 0
@@ -40,6 +40,19 @@ def run():
             best_config = config
     print("Best config = " + str(best_config))
     print("Best F1 = " + str(best_f1))
+
+
+def d_location():
+    train_d = get_eng_train_data(0.25, 0)
+    s = set()
+    for sent in train_d:
+        for i in range(len(sent)):
+            if sent[i][2] == 'I-LOC':
+                if i > 0 and sent[i-1][2] != 'I-LOC':
+                    s.add(sent[i-1][0].lower())
+                    #print(sent[i-1])
+    print(s)
+    y = 0
 
 
 run()
