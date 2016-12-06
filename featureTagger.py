@@ -83,6 +83,17 @@ def add_isupper_feature(words):
     return res
 
 
+def add_isupper_first_feature(words):
+    res = []
+    if words['pre']:
+        res.append('-1:word.isupper_first=%s' % words['pre'][0].isupper())
+    res.append('word.isupper_first=%s' % words['current'][0].isupper())
+    if words['next']:
+        res.append('+1:word.isupper_first=%s' % words['next'][0].isupper())
+
+    return res
+
+
 def add_islower_feature(words):
     res = []
     if words['pre']:
@@ -158,7 +169,8 @@ def word2features(sent, i, feature_config):
     if feature_config[5]:
         features.extend(add_before_location_feature(words))
     features.extend(add_islower_feature(words))
-    
+    features.extend(add_isupper_first_feature(words))
+
     if i > 0:
         word1 = sent[i-1][0]
         features.extend([
