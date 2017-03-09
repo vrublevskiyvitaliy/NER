@@ -1,8 +1,11 @@
 # coding=utf-8
 import codecs
+import nltk
 
 MAX_USED_DATA = 1000
 eng_text = []
+MODE_PURE_TYPES = 'PURE_TYPES'
+MODE = ''#MODE_PURE_TYPES
 
 
 def get_words_from_sentence(sentence):
@@ -16,6 +19,13 @@ def get_words_from_sentence(sentence):
 
 
 def get_all_text():
+    t_1 = list(nltk.corpus.conll2002.iob_sents('esp.train'))
+    t_2 = list(nltk.corpus.conll2002.iob_sents('esp.testa'))
+    t_3 = list(nltk.corpus.conll2002.iob_sents('esp.testb'))
+    return t_1 + t_2 + t_3
+
+
+'''def get_all_text():
     global eng_text, MAX_USED_DATA
     if len(eng_text):
         return eng_text
@@ -31,6 +41,7 @@ def get_all_text():
                     break
         file.close()
     return eng_text
+'''
 
 
 def get_eng_train_data(train_data_percent, block=0):
@@ -38,7 +49,11 @@ def get_eng_train_data(train_data_percent, block=0):
     size = len(text)
     size = int(train_data_percent * size)
     f = block * size
-    return text[f:f+size]
+    data = text[f:f+size]
+    if MODE == MODE_PURE_TYPES:
+        data = process_data_mode_pure_types(data)
+    #return data
+    return list(nltk.corpus.conll2002.iob_sents('esp.train'))
 
 
 def get_eng_test_data(train_data_percent, exclude):
@@ -47,4 +62,21 @@ def get_eng_test_data(train_data_percent, exclude):
     size = int(train_data_percent * size)
     begin = text[:exclude * size]
     end = text[(exclude + 1) * size + 1:]
-    return begin + end
+    data = begin + end
+    if MODE == MODE_PURE_TYPES:
+        data = process_data_mode_pure_types(data)
+    #return data
+    return list(nltk.corpus.conll2002.iob_sents('esp.testa'))
+
+
+def process_data_mode_pure_types(data):
+    correct_data = []
+    for s in data:
+        correct_s = []
+        for word in s:
+            t = word[2]
+            if len(t) > 1:
+                t = t[2:]
+            correct_s.append((word[0], word[1], t))
+        correct_data.append(correct_s)
+    return correct_data
