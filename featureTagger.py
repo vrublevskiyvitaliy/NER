@@ -124,19 +124,19 @@ def word2features(sent, i, feature_config):
     words = get_three_words(sent, i)
     pos_tags = get_three_pos_tags(sent, i)
 
-    if feature_config[0]:
+    if len(feature_config) > 0 and feature_config[0]:
         features.extend(add_len_feature(words))
-    if feature_config[1]:
+    if len(feature_config) > 1 and feature_config[1]:
         features.extend(add_lower_feature(words))
-    if feature_config[2]:
+    if len(feature_config) > 2 and feature_config[2]:
         features.extend(add_isupper_feature(words))
-    if feature_config[3]:
+    if len(feature_config) > 3 and feature_config[3]:
         features.extend(add_pos_tag_feature(pos_tags))
-    if feature_config[4]:
+    if len(feature_config) > 4 and feature_config[4]:
         features.extend(add_pos_tag_2_feature(pos_tags))
 
     if i > 0:
-        word1 = sent[i-1][0]
+        word1 = sent[i - 1][0]
         features.extend([
             '-1:word=%s' % word1,
             ##'-1:word.isalnum=%s' % word.isalnum(),
