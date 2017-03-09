@@ -1,7 +1,9 @@
 # coding=utf-8
 import codecs
+import nltk
 
-MAX_USED_DATA = 1000
+
+MAX_USED_DATA = 20000
 eng_text = []
 
 
@@ -20,16 +22,22 @@ def get_all_text():
     if len(eng_text):
         return eng_text
     else:
-        file = codecs.open("data/aij-wikiner-en-wp2.txt", "r", "utf_8_sig")
-        i = 0
-        for line in file:
-            line = line.strip()
-            if line != '':
-                i += 1
-                eng_text.append(get_words_from_sentence(line))
-                if i == MAX_USED_DATA:
-                    break
-        file.close()
+
+        eng_text = list(nltk.corpus.conll2002.iob_sents('esp.train'))
+        eng_text += list(nltk.corpus.conll2002.iob_sents('esp.testb'))
+        eng_text += list(nltk.corpus.conll2002.iob_sents('esp.testa'))
+
+
+        #file = codecs.open("data/aij-wikiner-en-wp2.txt", "r", "utf_8_sig")
+        #i = 0
+        #for line in file:
+        #    line = line.strip()
+        #    if line != '':
+        #        i += 1
+        #        eng_text.append(get_words_from_sentence(line))
+        #        if i == MAX_USED_DATA:
+        #            break
+        #file.close()
     return eng_text
 
 
@@ -38,7 +46,8 @@ def get_eng_train_data(train_data_percent, block=0):
     size = len(text)
     size = int(train_data_percent * size)
     f = block * size
-    return text[f:f+size]
+    #return text[f:f+size]
+    return list(nltk.corpus.conll2002.iob_sents('esp.train'))
 
 
 def get_eng_test_data(train_data_percent, exclude):
@@ -47,4 +56,5 @@ def get_eng_test_data(train_data_percent, exclude):
     size = int(train_data_percent * size)
     begin = text[:exclude * size]
     end = text[(exclude + 1) * size + 1:]
-    return begin + end
+    #return begin + end
+    return list(nltk.corpus.conll2002.iob_sents('esp.testa'))

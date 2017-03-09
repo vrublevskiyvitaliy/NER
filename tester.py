@@ -37,7 +37,7 @@ def bio_classification_report(y_true, y_predicted):
         labels=labels,
         target_names=tag_set,
     )
-    #print(report)
+    print(report)
 
     return f1
 

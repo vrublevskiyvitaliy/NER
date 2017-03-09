@@ -167,8 +167,8 @@ def word2features(sent, i, feature_config):
     if feature_config[4]:
         features.extend(add_pos_tag_2_feature(pos_tags))
     if feature_config[5]:
-        features.extend(add_before_location_feature(words))
-    features.extend(add_islower_feature(words))
+        features.extend(add_islower_feature(words))
+    #features.extend(add_islower_feature(words))
     features.extend(add_isupper_first_feature(words))
 
     if i > 0:
