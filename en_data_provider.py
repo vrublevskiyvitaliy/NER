@@ -5,7 +5,7 @@ import nltk
 MAX_USED_DATA = 1000
 eng_text = []
 MODE_PURE_TYPES = 'PURE_TYPES'
-MODE = ''#MODE_PURE_TYPES
+MODE = MODE_PURE_TYPES
 
 
 def get_words_from_sentence(sentence):
@@ -45,28 +45,28 @@ def get_all_text():
 
 
 def get_eng_train_data(train_data_percent, block=0):
-    text = get_all_text()
-    size = len(text)
-    size = int(train_data_percent * size)
-    f = block * size
-    data = text[f:f+size]
+    # text = get_all_text()
+    # size = len(text)
+    # size = int(train_data_percent * size)
+    # f = block * size
+    # data = text[f:f+size]
+    data = list(nltk.corpus.conll2002.iob_sents('esp.train'))
     if MODE == MODE_PURE_TYPES:
         data = process_data_mode_pure_types(data)
-    #return data
-    return list(nltk.corpus.conll2002.iob_sents('esp.train'))
+    return data
 
 
 def get_eng_test_data(train_data_percent, exclude):
-    text = get_all_text()
-    size = len(text)
-    size = int(train_data_percent * size)
-    begin = text[:exclude * size]
-    end = text[(exclude + 1) * size + 1:]
-    data = begin + end
+    # text = get_all_text()
+    # size = len(text)
+    # size = int(train_data_percent * size)
+    # begin = text[:exclude * size]
+    # end = text[(exclude + 1) * size + 1:]
+    # data = begin + end
+    data = list(nltk.corpus.conll2002.iob_sents('esp.testa'))
     if MODE == MODE_PURE_TYPES:
         data = process_data_mode_pure_types(data)
-    #return data
-    return list(nltk.corpus.conll2002.iob_sents('esp.testa'))
+    return data
 
 
 def process_data_mode_pure_types(data):

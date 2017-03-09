@@ -34,6 +34,7 @@ def run():
             print(f1)
         total_f1 /= blocks
         print("Config = " + str(config))
+        print("Number = " + str(c))
         print("Final F1 = " + str(total_f1))
         if total_f1 > best_f1:
             best_f1 = total_f1
