@@ -31,11 +31,12 @@ def run():
             train(train_d, train_file, config)
             f1 = test(test_d, train_file, config)
             total_f1 += f1
-            print(f1)
+            #print(f1)
         total_f1 /= blocks
-        print("Config = " + str(config))
-        print("Number = " + str(c))
+        #print("Config = " + str(config))
+        print("Number = " + str(c+1))
         print("Final F1 = " + str(total_f1))
+        print("#############")
         if total_f1 > best_f1:
             best_f1 = total_f1
             best_config = config
