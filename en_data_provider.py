@@ -7,7 +7,7 @@ eng_text = []
 MODE_PURE_TYPES = 'PURE_TYPES'
 MODE_BINARY = 'BINARY'
 MODE_B_NAME = 'B, NAME'
-MODE = MODE_B_NAME
+MODE = None
 
 
 def get_words_from_sentence(sentence):

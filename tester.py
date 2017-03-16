@@ -17,6 +17,11 @@ def get_correct_f1(y_true, y_predicted, labels):
         sample_weight=None
     )
     f1 = np.average(f1, weights=s)
+    p = np.average(p, weights=s)
+    r = np.average(r, weights=s)
+    print('F1 = ' + str(f1))
+    print('Pre = ' + str(p))
+    print('Recall = ' + str(r))
     return f1
 
 
