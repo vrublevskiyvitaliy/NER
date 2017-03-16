@@ -3,7 +3,7 @@ import codecs
 
 
 def get_log():
-    file = codecs.open("logs/B_NAME.txt", "r", "utf_8_sig")
+    file = codecs.open("logs/NAME_L.txt", "r", "utf_8_sig")
     return file
 
 

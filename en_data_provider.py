@@ -7,7 +7,9 @@ eng_text = []
 MODE_PURE_TYPES = 'PURE_TYPES'
 MODE_BINARY = 'BINARY'
 MODE_B_NAME = 'B, NAME'
-MODE = None
+MODE_NAME_L = 'NAME L'
+MODE_TYPE_L_TYPE = 'TYPE AND L-TYPE'
+MODE = MODE_TYPE_L_TYPE
 
 
 def get_words_from_sentence(sentence):
@@ -59,6 +61,10 @@ def get_eng_train_data(train_data_percent, block=0):
         data = process_data_mode_binary(data)
     if MODE == MODE_B_NAME:
         data = process_data_mode_b_name(data)
+    if MODE == MODE_NAME_L:
+        data = process_data_mode_name_l(data)
+    if MODE == MODE_TYPE_L_TYPE:
+        data = process_data_mode_type_l_type(data)
     return data
 
 
@@ -76,6 +82,10 @@ def get_eng_test_data(train_data_percent, exclude):
         data = process_data_mode_binary(data)
     if MODE == MODE_B_NAME:
         data = process_data_mode_b_name(data)
+    if MODE == MODE_NAME_L:
+        data = process_data_mode_name_l(data)
+    if MODE == MODE_TYPE_L_TYPE:
+        data = process_data_mode_type_l_type(data)
     return data
 
 
@@ -121,3 +131,61 @@ def process_data_mode_b_name(data):
     return correct_data
 
 
+def process_data_mode_name_l(data):
+    correct_data = []
+    for s in data:
+        correct_s = []
+        next_tag = None
+        flag = True
+        for i in reversed(range(len(s))):
+            word = s[i]
+            tag = word[2]
+            if len(tag) > 1:
+                if flag:
+                    t = 'L-NAME'
+                    flag = False
+                else:
+                    if next_tag and next_tag[2:] != tag[2:]:
+                        t = 'L-NAME'
+                    else:
+                        t = 'NAME'
+            else:
+                flag = True
+                t = tag
+            next_tag = tag
+            correct_s.append((word[0], word[1], t))
+        reversed_list = []
+        for i in reversed(range(len(s))):
+            reversed_list.append(correct_s[i])
+        correct_data.append(reversed_list)
+    return correct_data
+
+
+def process_data_mode_type_l_type(data):
+    correct_data = []
+    for s in data:
+        correct_s = []
+        next_tag = None
+        flag = True
+        for i in reversed(range(len(s))):
+            word = s[i]
+            tag = word[2]
+            if len(tag) > 1:
+                if flag:
+                    t = 'L-' + tag[2:]
+                    flag = False
+                else:
+                    if next_tag and next_tag[2:] != tag[2:]:
+                        t = 'L-' + tag[2:]
+                    else:
+                        t = tag[2:]
+            else:
+                flag = True
+                t = tag
+            next_tag = tag
+            correct_s.append((word[0], word[1], t))
+        reversed_list = []
+        for i in reversed(range(len(s))):
+            reversed_list.append(correct_s[i])
+        correct_data.append(reversed_list)
+    return correct_data
