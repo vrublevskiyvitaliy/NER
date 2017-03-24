@@ -9,8 +9,8 @@ MODE_BINARY = 'BINARY'
 MODE_B_NAME = 'B, NAME'
 MODE_NAME_L = 'NAME L'
 MODE_TYPE_L_TYPE = 'TYPE AND L-TYPE'
-MODE = MODE_TYPE_L_TYPE
-
+MODE = None
+LANG = 1
 
 def get_words_from_sentence(sentence):
     blocks = sentence.split(' ')
@@ -54,7 +54,10 @@ def get_eng_train_data(train_data_percent, block=0):
     # size = int(train_data_percent * size)
     # f = block * size
     # data = text[f:f+size]
-    data = list(nltk.corpus.conll2002.iob_sents('esp.train'))
+    if LANG is None:
+        data = list(nltk.corpus.conll2002.iob_sents('esp.train'))
+    else:
+        data = list(nltk.corpus.conll2002.iob_sents('ned.train'))
     if MODE == MODE_PURE_TYPES:
         data = process_data_mode_pure_types(data)
     if MODE == MODE_BINARY:
@@ -75,7 +78,10 @@ def get_eng_test_data(train_data_percent, exclude):
     # begin = text[:exclude * size]
     # end = text[(exclude + 1) * size + 1:]
     # data = begin + end
-    data = list(nltk.corpus.conll2002.iob_sents('esp.testa'))
+    if LANG is None:
+        data = list(nltk.corpus.conll2002.iob_sents('esp.testa'))
+    else:
+        data = list(nltk.corpus.conll2002.iob_sents('ned.testa'))
     if MODE == MODE_PURE_TYPES:
         data = process_data_mode_pure_types(data)
     if MODE == MODE_BINARY:

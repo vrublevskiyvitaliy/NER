@@ -22,6 +22,9 @@ def run():
     all_config = 2**max_c
     best_f1 = 0
     best_config = 0
+
+    print("N, F1, P, R ")
+
     for c in range(all_config):
         config = get_feature_configuration(c, max_c)
         total_f1 = 0
@@ -34,9 +37,10 @@ def run():
             #print(f1)
         total_f1 /= blocks
         #print("Config = " + str(config))
-        print("Number = " + str(c+1))
-        print("Final F1 = " + str(total_f1))
-        print("#############")
+        #print("Number = " + str(c+1))
+        #print("Final F1 = " + str(total_f1))
+        #print("#############")
+        #print(str(c+1) + ", " + str(total_f1) + ", " + str(total_f1) + ", " +  )
         if total_f1 > best_f1:
             best_f1 = total_f1
             best_config = config

@@ -7,6 +7,7 @@ import pycrfsuite
 from featureTagger import *
 import numpy as np
 
+i = 0
 
 def get_correct_f1(y_true, y_predicted, labels):
     p, r, f1, s = precision_recall_fscore_support(
@@ -19,9 +20,12 @@ def get_correct_f1(y_true, y_predicted, labels):
     f1 = np.average(f1, weights=s)
     p = np.average(p, weights=s)
     r = np.average(r, weights=s)
-    print('F1 = ' + str(f1))
-    print('Pre = ' + str(p))
-    print('Recall = ' + str(r))
+    global i
+    i += 1
+    print(str(i) + ", " + str(f1) + ", " + str(p) + ", " + str(r))
+    #print('F1 = ' + str(f1))
+    #print('Pre = ' + str(p))
+    #print('Recall = ' + str(r))
     return f1
 
 
