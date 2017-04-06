@@ -1,0 +1,287 @@
+%% !TEX encoding = Windows Cyrillic
+\documentclass{SHVpaper}
+\usepackage{graphicx}
+
+\begin{document}
+
+\selectlanguage{ukrainian}
+
+\section{
+Розпізнавання іменованих сутностей
+}
+
+\abstract{
+В роботі розглянуто застосування CRF (Conditional Random Fields) для розпізнавання іменованих сутностей на такі класи: PERSON, ORGANIZATION, LOCATION,  MISC. Було проведено тестування на іспанському та нідерландському корпусі та отримані F1 score 0.75 та 0.72 відповідно використовуючи BI тегування. Було проаналізовано вплив різновидів тегування (BI, Pure Name, IL та інші) на результат (F1, Precision, Recall). Проаналізована стабільність features на двох мовах та вплив вибору комбінацій features на результат.
+}
+
+\subsection{Вступ}
+
+\emph{Проблематика задачі.} Named Entity Recognition (NER) - це задача ідентифікації та класифікації імен людей, організації, місць та інших об'єктів в межах тексту. Вона займає центральне місце багатьох завдань НЛП.
+
+Завдання розпізнавання іменованих сутностей (named entity recognition, NER), полягає в тому, що б виділити і класифікувати певні фрагменти тексту на заздалегідь відомих типах. Наприклад, на такі 4 типи:
+
+\begin{itemize}
+  \item PERSON (люди)
+  \item ORGANIZATION (організації)
+  \item LOCATION (географічні об'єкти)
+  \item MISC (різне, в широкому сенсі, включаючи, наприклад,події, твір мистецтва і національності)
+ \end{itemize}
+ 
+Іменованими сутностями є фрази, які містять імена осіб, організації та місця. Наприклад: 
+
+[ORG U.N. ] official [PER Ekeus ] heads for [LOC Baghdad ].
+
+Іншим більш не тривіальним є наступний приклад:
+
+
+[PERSON Paris Hilton] visited the [LOCATION Paris] [ORGANIZATION Hilton]
+
+
+Різні входження слова Paris відповідають імені та географічній назві. 
+
+
+Вирішення подібних багатозначних робить задачу розпізнавання іменованих сутностей складним завданням семантичної обробки текстів.
+
+\subsection{Метрики}
+
+Точність:
+$$  \text{precision}=\frac{|\{\text{relevant documents}\}\cap\{\text{retrieved documents}\}|}{|\{\text{retrieved documents}\}|}$$
+
+Повнота:
+$$ \text{recall}=\frac{|\{\text{relevant documents}\}\cap\{\text{retrieved documents}\}|}{|\{\text{relevant documents}\}|} $$
+
+F1 score - середнє гармонійне точності та повноти.
+
+\subsection{Features}
+
+Було розглянути та досліджено такі набори feature функцій. [Таблиця 1]
+
+\begin{table}
+\centering
+\caption{Features}
+\label{my-label}
+\begin{tabular}{ll}
+Context word feature                                                             & Контекст \\
+Word suffix                                                                      & Суфікс слова                                                           \\
+Word prefix & Префікс                                                                                                                                       \\
+LengthIF&Чи більша довжина слова деякої заданої костанти                                                                                                  \\
+First word&Чи є першим словом у реченні                                                                                                                   \\
+Last word&Чи є останнім словом у реченні                                                                                                                  \\
+Digit features&Чи міститься цифра у слові                                                                      \\
+Initial capital&Слово з великої букви                                                                                                                     \\
+All capitals&Всі букви великі                                                                                                                            \\
+All lowercase & Всі букви малі                                                                                                                             \\
+Capitals mix & Мікс                                                                                                                                         \\
+Roman & Римські цифри                                                                                                                                       \\
+Single character & Лише один символ \\
+Part of Speech (POS)&Частина мови, суфікс частини мови                                                                                                  
+\end{tabular}%
+
+\end{table}
+
+\subsection{Модель}
+
+В якості моделі будемо використовувати CRF \cite{CRF}. Його використовують в завданнях розпізнавання мови і образів, обробки текстової інформації, а також і в інших предметних областях: біоінформатики, комп'ютерної графіки та ін.
+\vspace{5mm}
+
+На сьогоднішній день саме метод CRF є найбільш популярним і точним способом для NER. Наприклад, він був реалізований в проекті Стенфордського університету Stanford Named Entity Recognizer. 
+
+\subsection{Корпус}
+
+Було використано корпус Сonll2002, мова іспанська та голандська, дані коруса у форматі: Слово – Pos-tag – BIO-teg.
+
+\subsection{Реалізація}
+
+Для реалізації було використано мову Python та модуль pycrfsuite для CRF.
+
+\vspace{5mm}
+
+Були використанні такі feature-функції:
+
+\vspace{5mm}
+
+\begin{itemize}
+\item слово
+\item суфікс слова, 3 літери
+\item суфікс слова, 2 літери
+\item чи перша літера у верхньому регістрі
+\item чи слово складається з цифр
+\item чи початок речення
+\item чи кінець речення
+\item довжина слова
+\item слово зі всіма буквами в нижньому регістрі
+\item чи всі букви у верхньому регістрі
+\item чи слово в нижньому регістрі
+\item POS
+\item POS префікс, 2 літери
+\end{itemize}
+
+\vspace{5mm}
+
+Було реалізовано перебір деяких комбінацій features.
+
+\begin{figure}[h]
+\hfil\includegraphics[height=4in]{1}\hfil
+\caption
+{
+  Результати на різних наборах feature функцій на іспанській мові використовуючи BIO тегування.
+}
+\label{aba:fig1}
+\end{figure}
+
+
+Переміг тест, у якому використовуються всі функції. Проте це не завжди так, як ми можемо переконатися дивлячись на графік. Навчання і тестування проводиться на однаковому наборі feature функцій.
+
+\vspace{5mm}
+
+Проведемо більш детальний аналіз використовуючи графіки F1, Precision та Recall.  
+
+\begin{figure}[h]
+\hfil\includegraphics[height=2in]{7}\hfil
+\caption
+{Spain F1}
+\label{aba:fig1}
+\hfil\includegraphics[height=2in]{8}\hfil
+\caption
+{Spain F1}
+\label{aba:fig1}
+\end{figure}
+
+Як бачимо зменшення кількості класів (перехід на чисті типи іменованих сутностей) покращує F1. 
+Також більш ефективним є тегування Begin-Type, Inside-Type ніж Inside-Type, Last-Type, 
+що пояснюється мовними особливостями побудови складених іменованих сутностей.
+
+
+\vspace{40mm}
+
+\begin{figure}[h]
+\hfil\includegraphics[height=2in]{9}\hfil
+\caption
+{Spain Precision}
+\label{aba:fig1}
+\hfil\includegraphics[height=2in]{10}\hfil
+\caption
+{Spain Precision}
+\label{aba:fig1}
+\end{figure}
+
+Схожу ситуацію можна спостерігати і на графіках точності та повноти.
+\begin{figure}[h]
+\hfil\includegraphics[height=2in]{11}\hfil
+\caption
+{Spain Recall}
+\label{aba:fig1}
+\hfil\includegraphics[height=2in]{12}\hfil
+\caption
+{Spain Recall}
+\label{aba:fig1}
+\end{figure}
+
+Не можна не відмітити що в загальному найкращі результати дають тести з найбільшою кількістю feature функцій. 
+Це можна пояснити доволі невеликою кількістю feature функцій - адже не виникає перенавчання моделей на несуттєвих змінних.
+
+\vspace{30mm}
+\subsection{Порівняння стабільності feautures на різних мовах}
+
+
+\begin{figure}[h]
+\hfil\includegraphics[height=2in]{7}\hfil
+\caption
+{Spain F1}
+\label{aba:fig1}
+\hfil\includegraphics[height=2in]{13}\hfil
+\caption
+{Dutch F1}
+\label{aba:fig1}
+\end{figure}
+
+Можна помітити, що на тих самих наборах feature функцій зберігається характер фунції F1 на різних мовах, тобто дані набори features є дійсно стабільними.
+\vspace{60mm}
+\subsection{Результати}
+
+В результаті дослідження було побудовані моделі, які дають змогу отримати F1  0.75 та 0.72 для іспанської та нідерландської мови відповідно.
+
+Порівнюючи цей результат з результатами учасників змагання CoNLL-2002 \cite{CoNLL} ми б входили в топ - 5 кращих результатів.  
+Загалом було досліджено як комбінації feature функцій впливають на модель. Було показана їх стабільність на двох мовах, та проаналізовано вплив тегування на кінцевий результат.
+
+\subsection{Автори}
+
+\author{Врублевський Віталій}{студент 4 курсу факультет кібернетики}{ vitaliyvrublevskiy@gmail.com }
+
+
+\vspace{300mm}
+\begin{thebibliography}{99}
+\bibitem{CRF}
+J. Laerty,  A. McCallum, F. Pereira. Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data. 
+Proceedings of the 18th International Conference on Machine Learning. 282-289. 2001.
+\bibitem{CoNLL}
+http://www.cnts.ua.ac.be/conll2002/ner/.
+
+\end{thebibliography}
+
+\subsection{Додатки}
+
+\begin{figure}[h]
+\hfil\includegraphics[height=5in]{2}\hfil
+\caption
+{
+  Результати на різних наборах feature функцій на іспанській мові використовуючи Type, O тегування.
+}
+\label{aba:fig1}
+\end{figure}
+
+\begin{figure}[h]
+\hfil\includegraphics[height=5in]{3}\hfil
+\caption
+{
+  Результати на різних наборах feature функцій на іспанській мові використовуючи Name, O тегування.
+}
+\label{aba:fig1}
+\end{figure}
+
+\begin{figure}[h]
+\hfil\includegraphics[height=5in]{4}\hfil
+\caption
+{
+  Результати на різних наборах feature функцій на іспанській мові використовуючи Name, B-Name,O тегування.
+.
+}
+\label{aba:fig1}
+\end{figure}
+
+\begin{figure}[h]
+\hfil\includegraphics[height=5in]{5}\hfil
+\caption
+{
+  Результати на різних наборах feature функцій на іспанській мові використовуючи Name, L-Name,O тегування.
+}
+\label{aba:fig1}
+\end{figure}
+
+\begin{figure}[h]
+\hfil\includegraphics[height=5in]{6}\hfil
+\caption
+{
+  Результати на різних наборах feature функцій на іспанській мові використовуючи L-Type, O тегування.
+}
+\label{aba:fig1}
+\end{figure}
+
+\begin{figure}[h]
+\hfil\includegraphics[height=2in]{14}\hfil
+\caption
+{
+  Dutch Precision
+}
+\label{aba:fig1}
+\hfil\includegraphics[height=2in]{15}\hfil
+\caption
+{
+  Dutch Recall
+}
+\label{aba:fig1}
+\end{figure}
+
+
+
+\end{document} 
